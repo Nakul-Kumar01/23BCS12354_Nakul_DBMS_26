@@ -1,0 +1,16 @@
+-- SELECT * FROM transactions;
+
+SELECT SUM(X.C) AS PAYMENT_COUNT
+FROM (
+SELECT COUNT(T1.MERCHANT_ID) -1 AS C 
+FROM 
+TRANSACTIONS T1
+INNER JOIN
+TRANSACTIONS T2
+ON T1.MERCHANT_ID = T2.MERCHANT_ID
+AND T1.credit_card_id = T2.credit_card_id
+AND T1.AMOUNT = T2.AMOUNT
+AND T1.transaction_id < T2.transaction_id
+WHERE EXTRACT(MINUTE FROM T2.transaction_timestamp) - EXTRACT(MINUTE FROM T1.transaction_timestamp) <= '10'
+GROUP BY T1.MERCHANT_ID
+) AS X;
